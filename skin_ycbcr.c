@@ -38,6 +38,7 @@ char pathout[400]="result/";
 char c_kk[400]="";
 char delimiter[200]=".";
 char filename[400]="",immagine[200],output[400]="";
+char predicted[200]="";
 
 //sort of the histogram
 int *sortHist(int *iBins,int *values,int num) {
@@ -235,6 +236,7 @@ int main (int argc, char **argv) {
 	strcpy(filename,"");
 	strcpy(output,"");
 	strcpy(immagine,argv[1]);
+	strcpy(predicted,argv[2]);
 	strcat(filename,immagine);
 	image=strtok(immagine,delimiter);
 	printf("working on %s\n",filename);
@@ -371,7 +373,8 @@ int main (int argc, char **argv) {
 					cvSet2D(bw_final,i,j,cvScalarAll(255));
 		}}}
 
-cvShowImage("Skin Pixels",bw_final);cvWaitKey(0);
+//cvShowImage("Skin Pixels",bw_final);cvWaitKey(0);
+cvSaveImage(predicted, bw_final);
 cvReleaseImage( &frame_rgb );
 cvReleaseImage( &frame_ycbcr );
 cvReleaseImage( &bw_final );

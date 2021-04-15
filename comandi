@@ -1,0 +1,2 @@
+docker-compose exec opencv ./build.sh #build
+docker-compose exec opencv ./app image1.jpg #runna
