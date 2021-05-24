@@ -15,8 +15,12 @@ from shutil import copyfile
 # remember that Pratheepan dataset has one file with comma in the filename
 csv_sep = '?'
 
-def run_dyc(path_in, path_out):
-    command = f'docker-compose exec opencv ./app {path_in} {path_out}'
+def run_dyc(path_in, path_out, bench_out = None):
+    if bench_out == None:
+        command = f'docker-compose exec opencv ./app {path_in} {path_out}'
+    else:
+        command = f'docker-compose exec opencv ./app {path_in} {path_out} {bench_out}'
+    
     #print(command)
     process = subprocess.run(command.split())
 
@@ -38,6 +42,36 @@ def load_skintone_split(skintone):
         copyfile('./dataset/Schmugge/dark2305_1309.csv', './dataset/Schmugge/data.csv')
     else:
         print(f'skintone type invalid: {skintone}')
+
+# do not use with schmugge (4 columns)
+def get_bench_testset(csv_file, count = 15):
+    # read the images CSV
+    file = open(csv_file)
+    file3c = file.read().splitlines()
+    file.close()
+
+    filenames = []
+    for i in range(count):
+        istr = str(i).zfill(2)
+        
+        filenames.append(f'im000{istr}')
+
+    #j = 0
+    # rewrite csv file
+    with open(csv_file, 'w') as out:
+        for entry in file3c:
+            ori_path = entry.split(csv_sep)[0]
+            gt_path = entry.split(csv_sep)[1]
+            note = 'tr'
+
+            ori_basename = os.path.basename(ori_path)
+            ori_filename, ori_ext = os.path.splitext(ori_basename)
+
+            #if j < count:
+            if ori_filename in filenames:
+                note = 'te'
+                
+            out.write(f"{ori_path}{csv_sep}{gt_path}{csv_sep}{note}\n")
 
 
 
@@ -61,26 +95,81 @@ if __name__ == "__main__":
         datas = ['dataset/ECU', 'dataset/HGR_small', 'dataset/Schmugge']
     elif mode == 'skintones':
         datas = ['dark', 'medium', 'light']
+    elif mode == 'bench':
+        datas = None
     else:
         exit('Invalid mode! Possible values are: normal, skintones')
     
     timestr = get_timestamp()
 
-    for ds in datas:
-        if mode == 'skintones':
-            ds_name = ds
-            ds = f'./dataset/Schmugge'
-        else:
-            ds_name = os.path.basename(ds).lower()
+    if datas != None:
+        for ds in datas:
+            if mode == 'skintones':
+                ds_name = ds
+                ds = f'./dataset/Schmugge'
+            else:
+                ds_name = os.path.basename(ds).lower()
 
+            csv_file = os.path.join(ds, 'data.csv')
+            #ds_name = os.path.basename(ds).lower()
+
+            if mode == 'skintones':
+                load_skintone_split(ds_name)
+
+            # prepare directories
+            out_dir = f'./predictions/{timestr}/dyc/base/{ds_name}'
+            pred_dir = f'{out_dir}/p'
+            x_dir = f'{out_dir}/x'
+            y_dir = f'{out_dir}/y'
+            os.makedirs(pred_dir, exist_ok=True)
+            os.makedirs(x_dir, exist_ok=True)
+            os.makedirs(y_dir, exist_ok=True)
+
+            # read csv lines
+            file3c = open(csv_file)
+            triples = file3c.read().splitlines()
+            file3c.close()
+
+            # check if there is a test set
+            has_test = False
+            for entry in triples: # oriname.ext, gtname.ext
+                note = entry.split(csv_sep)[2]
+                if note == 'te':
+                    has_test = True
+                    break
+            
+            #for entry in tqdm(triples): # oriname.ext, gtname.ext
+            for entry in triples: # oriname.ext, gtname.ext
+                ori_path = entry.split(csv_sep)[0]
+                gt_path = entry.split(csv_sep)[1]
+                note = entry.split(csv_sep)[2]
+                ori_name, ori_ext = os.path.splitext(os.path.basename(ori_path))
+                pred_path = os.path.join(pred_dir, ori_name + '.png')
+
+                # predict all dataset if there is not a test split
+                if has_test == False:
+                    note = 'te'
+                
+                # predict only test images
+                if note == 'te':
+                    #save x
+                    im_x = cv2.imread(ori_path)
+                    x_path = os.path.join(x_dir, ori_name + ori_ext)
+                    cv2.imwrite(x_path, im_x)
+                    #save y
+                    im_y = cv2.imread(gt_path)
+                    y_path = os.path.join(y_dir, ori_name + '.png')
+                    cv2.imwrite(y_path, im_y)
+                    # predict
+                    run_dyc(ori_path, pred_path)
+    ## BENCHMARK mode
+    else:
+        # use ECU for benchmarking
+        ds = 'dataset/ECU'
         csv_file = os.path.join(ds, 'data.csv')
-        #ds_name = os.path.basename(ds).lower()
-
-        if mode == 'skintones':
-            load_skintone_split(ds_name)
 
         # prepare directories
-        out_dir = f'./predictions/{timestr}/dyc/base/{ds_name}'
+        out_dir = f'./predictions/bench/{timestr}'
         pred_dir = f'{out_dir}/p'
         x_dir = f'{out_dir}/x'
         y_dir = f'{out_dir}/y'
@@ -88,40 +177,36 @@ if __name__ == "__main__":
         os.makedirs(x_dir, exist_ok=True)
         os.makedirs(y_dir, exist_ok=True)
 
+        # set only the first 15 ECU images as test
+        get_bench_testset(csv_file, count=15)
+
         # read csv lines
         file3c = open(csv_file)
         triples = file3c.read().splitlines()
         file3c.close()
 
-        # check if there is a test set
-        has_test = False
-        for entry in triples: # oriname.ext, gtname.ext
-            note = entry.split(csv_sep)[2]
-            if note == 'te':
-                has_test = True
-                break
-        
-        #for entry in tqdm(triples): # oriname.ext, gtname.ext
-        for entry in triples: # oriname.ext, gtname.ext
-            ori_path = entry.split(csv_sep)[0]
-            gt_path = entry.split(csv_sep)[1]
-            note = entry.split(csv_sep)[2]
-            ori_name, ori_ext = os.path.splitext(os.path.basename(ori_path))
-            pred_path = os.path.join(pred_dir, ori_name + '.png')
+        # save 5 observations
+        for i in range(5):
+            bench_file = f'bench{i}.txt'
 
-            # predict all dataset if there is not a test split
-            if has_test == False:
-                note = 'te'
-            
-            # predict only test images
-            if note == 'te':
-                #save x
-                im_x = cv2.imread(ori_path)
-                x_path = os.path.join(x_dir, ori_name + ori_ext)
-                cv2.imwrite(x_path, im_x)
-                #save y
-                im_y = cv2.imread(gt_path)
-                y_path = os.path.join(y_dir, ori_name + '.png')
-                cv2.imwrite(y_path, im_y)
-                # predict
-                run_dyc(ori_path, pred_path)
+            # predict
+            for entry in triples: # oriname.ext, gtname.ext
+                ori_path = entry.split(csv_sep)[0]
+                gt_path = entry.split(csv_sep)[1]
+                note = entry.split(csv_sep)[2]
+                ori_name, ori_ext = os.path.splitext(os.path.basename(ori_path))
+                pred_path = os.path.join(pred_dir, ori_name + '.png')
+
+                # predict only test images
+                if note == 'te':
+                    #save x
+                    im_x = cv2.imread(ori_path)
+                    x_path = os.path.join(x_dir, ori_name + ori_ext)
+                    cv2.imwrite(x_path, im_x)
+                    #save y
+                    im_y = cv2.imread(gt_path)
+                    y_path = os.path.join(y_dir, ori_name + '.png')
+                    cv2.imwrite(y_path, im_y)
+                    
+                    # predict
+                    run_dyc(ori_path, pred_path, bench_file)

@@ -40,6 +40,7 @@ char c_kk[400] = "";
 char delimiter[200] = ".";
 char filename[400] = "", immagine[200], output[400] = "";
 char predicted[200] = "";
+char benchout[200] = "";
 
 //sort of the histogram
 int *sortHist(int *iBins, int *values, int num)
@@ -321,6 +322,16 @@ int main(int argc, char **argv)
 	strcpy(output, "");
 	strcpy(immagine, argv[1]); // path_in
 	strcpy(predicted, argv[2]); // path_out
+
+	if (argc == 4) // 4 because the program name is also an arg
+	{
+		strcpy(benchout, argv[3]);
+	}
+	else
+	{
+		strcpy(benchout, "bench.txt");
+	}
+
 	strcat(filename, immagine);
 	image = strtok(immagine, delimiter);
 	printf("working on %s\n", filename);
@@ -519,7 +530,7 @@ int main(int argc, char **argv)
 	double time_taken = end.tv_sec + end.tv_usec / 1e6 -
                         start.tv_sec - start.tv_usec / 1e6; // in seconds
 	// salva i tempi di esecuzione in un file
-	FILE* f = fopen("bench.txt", "a");
+	FILE* f = fopen(benchout, "a");
 	if (f != NULL)
 	{
 		fprintf(f, "%s,%f\n", predicted, time_taken);
