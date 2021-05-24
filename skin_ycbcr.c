@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+
 #define PI 3.14159265
 
 int bins=256;
@@ -373,8 +374,8 @@ int main (int argc, char **argv) {
 					cvSet2D(bw_final,i,j,cvScalarAll(255));
 		}}}
 
-//cvShowImage("Skin Pixels",bw_final);cvWaitKey(0);
-cvSaveImage(predicted, bw_final);
+cvShowImage("Skin Pixels",bw_final);cvWaitKey(0);
+// cvSaveImage(predicted, bw_final);
 cvReleaseImage( &frame_rgb );
 cvReleaseImage( &frame_ycbcr );
 cvReleaseImage( &bw_final );
