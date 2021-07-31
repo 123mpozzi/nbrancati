@@ -98,7 +98,7 @@ if __name__ == "__main__":
     elif mode == 'bench':
         datas = None
     else:
-        exit('Invalid mode! Possible values are: normal, skintones')
+        exit('Invalid mode! Possible values are: normal, skintones, bench')
     
     timestr = get_timestamp()
 
