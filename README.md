@@ -1,6 +1,6 @@
 
 # Adaptive rule based skin detector
-A skin detection method that detects human skin using thresholds.  
+Detecting human skin using thresholds.  
 
 **Original paper:** N. Brancati, G. De Pietro,M. Frucci, and L. Gallo. “Human skin detection through correlation rules between the YCb and YCr subspaces based on dynamic color clustering”. Computer Vision and Image Understanding 155, 2017, pp. 33–42.
 
@@ -18,5 +18,7 @@ A skin detection method based on a dynamic generation of the skin cluster range 
 
 
 # Credits
+
+Credits to the original version authors: 
 https://github.com/nadiabrancati/skin_detection/
 
