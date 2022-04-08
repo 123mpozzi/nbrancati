@@ -1,3 +1,9 @@
 dataset
 predictions
 bench.txt
+venv
+__pycache__
+dumps
+logs
+.vscode
+docs/*.json

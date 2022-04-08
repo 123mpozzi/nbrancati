@@ -33,12 +33,8 @@ float *ranges[] = {ranges1, ranges2};
 int hist_size[] = {bins, bins};
 CvHistogram *histYCr, *histYCb;
 int Y0, Y1, Y2, Y3;
-char pathf[400] = "original_images/";
-char *image;
-char pathout[400] = "result/";
 char c_kk[400] = "";
-char delimiter[200] = ".";
-char filename[400] = "", immagine[200], output[400] = "";
+char immagine[200] = "";
 char predicted[200] = "";
 char benchout[200] = "";
 
@@ -318,9 +314,7 @@ int main(int argc, char **argv)
 	double CrMin = 133, CrMax = 183, CbMin = 77, CbMax = 128, YMin = 0, YMax = 255;
 	double max_valCr, min_valCb;
 
-	strcpy(filename, "");
-	strcpy(output, "");
-	strcpy(immagine, argv[1]); // path_in
+	strcpy(immagine, argv[1]);	// path_in
 	strcpy(predicted, argv[2]); // path_out
 
 	if (argc == 4) // 4 because the program name is also an arg
@@ -332,15 +326,10 @@ int main(int argc, char **argv)
 		strcpy(benchout, "bench.txt");
 	}
 
-	strcat(filename, immagine);
-	image = strtok(immagine, delimiter);
-	printf("working on %s\n", filename);
+	printf("working on %s\n", immagine);
 
-	strcpy(output, pathout);
-	strcat(output, image);
-	strcat(output, ".bmp");
 	// caricamento immagine input
-	if ((source = cvLoadImage(filename, -1)) == 0)
+	if ((source = cvLoadImage(immagine, -1)) == 0)
 		return -1;
 	height = source->height;
 	width = source->width;
@@ -528,9 +517,9 @@ int main(int argc, char **argv)
 	// fine calcolo tempi di esecuzione - https://stackoverflow.com/a/55346612
 	gettimeofday(&end, NULL);
 	double time_taken = end.tv_sec + end.tv_usec / 1e6 -
-                        start.tv_sec - start.tv_usec / 1e6; // in seconds
+						start.tv_sec - start.tv_usec / 1e6; // in seconds
 	// salva i tempi di esecuzione in un file
-	FILE* f = fopen(benchout, "a");
+	FILE *f = fopen(benchout, "a");
 	if (f != NULL)
 	{
 		fprintf(f, "%s,%f\n", predicted, time_taken);
