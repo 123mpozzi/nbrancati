@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import sys
 
 
 # Credits to
@@ -11,7 +12,7 @@ class Logger:
     def __new__(cls, *args, **kwargs):
         if cls._logger is None:
 
-            print("Logger new")
+            print("Logger new", file=sys.stderr)
             cls._logger = super().__new__(cls, *args, **kwargs)
             cls._logger = logging.getLogger("skin")
             cls._logger.setLevel(logging.INFO)
@@ -26,7 +27,7 @@ class Logger:
             log_filename = "log_" + now.strftime("%Y-%m-%d") + ".log"
             fileHandler = logging.FileHandler(os.path.join(dirname, log_filename))
 
-            streamHandler = logging.StreamHandler()
+            streamHandler = logging.StreamHandler(sys.stderr)
 
             fileHandler.setFormatter(formatter)
             streamHandler.setFormatter(formatter)

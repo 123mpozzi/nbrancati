@@ -1,5 +1,5 @@
 import os
-import subprocess
+import sys
 import time
 import traceback
 from shutil import copyfile
@@ -71,13 +71,13 @@ def predict(path_x, path_y, out_dir, out_bench: str = ''):
         copyfile(path_y, out_y)
 
 def run_skin_detector(path_in, path_out, bench_out = None):
+    '''Print commands that will be executed via pipe'''
     if bench_out == None:
-        command = f'docker-compose exec opencv ./app {path_in} {path_out}'
+        command = f'./app {path_in} {path_out}'
     else:
-        command = f'docker-compose exec opencv ./app {path_in} {path_out} {bench_out}'
+        command = f'./app {path_in} {path_out} {bench_out}'
     
-    debug(command)
-    process = subprocess.run(command.split(), stdout=subprocess.DEVNULL)
+    print(command)
 
 def make_predictions(image_paths, out_dir, out_bench: str = ''):
     '''Detect skin pixels over a list of images'''
@@ -99,10 +99,10 @@ def make_predictions(image_paths, out_dir, out_bench: str = ''):
         # File not found, prediction algo fail, ..
         except Exception:
             error(f'Failed to infer on image: {im_path}')
-            print(traceback.format_exc())
+            print(traceback.format_exc(), file=sys.stderr)
 
     predictions_hash = hash_dir(out_dir)
-    print(predictions_hash)
+    print(predictions_hash, file=sys.stderr)
     return predictions_hash
 
 def base_preds(timestr: str, datasets: list, only_test_set: bool = True):

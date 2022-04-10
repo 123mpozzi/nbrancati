@@ -1,4 +1,4 @@
-import os
+import os, sys, time
 
 import click
 from utils.db_utils import *
@@ -51,6 +51,7 @@ def bench(size, observations):
         make_predictions(image_paths, out_dir.format(k),
             out_bench=os.path.join(out_dir.format(k), '..', f'bench{k}.txt'))
     
+    time.sleep(5) # wait for predictions to complete
     # Print inference times
     read_performance(os.path.join(out_dir.format(0), '..'))
 

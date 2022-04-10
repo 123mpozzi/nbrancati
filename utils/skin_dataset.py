@@ -5,6 +5,7 @@ import traceback
 from math import floor
 from random import shuffle
 from shutil import copyfile
+import sys
 
 import cv2
 from tqdm import tqdm
@@ -58,7 +59,7 @@ class skin_dataset(object):
             file_content = file.read().splitlines() # multi-column file
             file.close()
         except Exception:
-            print(traceback.format_exc())
+            print(traceback.format_exc(), file=sys.stderr)
             critical('Error on accessing ' + csv_file)
             exit()
         
@@ -208,7 +209,7 @@ class skin_dataset(object):
         except Exception:
             error(f'Dataset {self.name} import failed!')
             stacktrace = traceback.format_exc()
-            print(stacktrace)
+            print(stacktrace, file=sys.stderr)
         finally:
             return stacktrace
     

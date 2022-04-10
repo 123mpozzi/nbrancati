@@ -1,4 +1,5 @@
 import click
+import sys
 from utils.db_utils import get_db_by_name, skin_databases_names
 
 
@@ -13,4 +14,4 @@ def cli_manage():
 def reset(dataset, predefined):
     trace = get_db_by_name(dataset).reset(predefined=predefined)
     if trace: # if there are been errors of some kind
-        print(trace)
+        print(trace, file=sys.stderr)

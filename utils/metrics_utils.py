@@ -1,5 +1,6 @@
 import os
 from statistics import mean, pstdev
+from sys import stderr
 
 import numpy as np
 from utils.metrics import confmat_scores

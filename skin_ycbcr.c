@@ -326,7 +326,7 @@ int main(int argc, char **argv)
 		strcpy(benchout, "bench.txt");
 	}
 
-	printf("working on %s\n", immagine);
+	//printf("working on %s\n", immagine); // debug
 
 	// caricamento immagine input
 	if ((source = cvLoadImage(immagine, -1)) == 0)
