@@ -1,83 +1,12 @@
-import json
 import unittest
 
 import numpy as np
-from cli.measure import dump_dir, eval
-from click.testing import CliRunner
 from utils.metrics import *
 from utils.logmanager import *
-from utils.metrics_utils import load_images
-
-from tests.helper import set_working_dir
-
-docs_dir = os.path.join('..', 'docs')
-docs_y_path = os.path.join(docs_dir, 'y')
-docs_p_path = os.path.join(docs_dir, 'p')
-
-
-def load_sample_images() -> list:
-    '''Load and return groundtruths and predictions of documentation images'''
-    results = []
-    for i in ('infohiding', 'st-vincent-actor-album-art'):
-        gt_path = os.path.join(docs_y_path, f'{i}.png')
-        pred_path = os.path.join(docs_p_path, f'{i}.png')
-        gt_bool, pred_bool = load_images(gt_path, pred_path)
-        results.append((gt_bool, pred_bool))
-
-
-# Test on documentation sample images
-docs_images = load_sample_images()
-
-sample_results = [
-    {
-        # image 1
-        "dprs": 0.304876812223106,
-        "f1": 0.793928629097368,
-        "f2": 0.7443561670380776,
-        "iou": 0.6582766561345258,
-        "iou_logical": 0.6582766561345258,
-        "mcc": 0.7825427429917932,
-        "p": "..\\docs\\p\\infohiding.png",
-        "precision": 0.8930543446672479,
-        "recall": 0.7146096157200162,
-        "specificity": 0.991948540672997,
-        "y": "..\\docs\\y\\infohiding.png",
-    },
-    {
-        # image 2
-        "dprs": 1.3336708225653098,
-        "f1": 0.13122254358421426,
-        "f2": 0.18615591953500293,
-        "iou": 0.07021838963955183,
-        "iou_logical": 0.07021838963955183,
-        "mcc": -0.2938348302781793,
-        "p": "..\\docs\\p\\st-vincent-actor-album-art.png",
-        "precision": 0.08796124470142402,
-        "recall": 0.2582217507239728,
-        "specificity": 0.3702157506761177,
-        "y": "..\\docs\\y\\st-vincent-actor-album-art.png",
-    },
-    {
-        # averages
-        "dprs": "0.8193 \u00b1 0.51",
-        "dprs_medium": "0.7906",
-        "f1": "0.4626 \u00b1 0.33",
-        "f1_medium": "0.4884",
-        "f2": "0.4653 \u00b1 0.28",
-        "iou": "0.3642 \u00b1 0.29",
-        "iou_logical": "0.3642 \u00b1 0.29",
-        "mcc": "0.2444 \u00b1 0.54",
-        "method": "probabilistic",
-        "precision": "0.4905 \u00b1 0.40",
-        "recall": "0.4864 \u00b1 0.23",
-        "specificity": "0.6811 \u00b1 0.31"
-    }
-]
-
 
 
 class TestMetrics(unittest.TestCase):
-    '''Functional and Unit testing for metrics measurements'''
+    '''Unit testing for metrics measurements'''
 
 
     def metrics_unittesting(self):
@@ -243,48 +172,6 @@ class TestMetrics(unittest.TestCase):
         mcc_ = round(mcc(data), 2)
         self.assertEqual(f1_, 0.29)
         self.assertEqual(mcc_, 0.31)
-
-
-    def test_eval(self):
-        '''
-        Metrics functions are correct for simple numbers
-
-        Command run without errors
-
-        Metrics are correct in respect to documentation sample images
-        '''
-        set_working_dir(self)
-
-        runner = CliRunner()
-
-        info('METRICS UNIT TESTING...')
-        self.metrics_unittesting()
-        self.mcc_unittest()
-
-        dump_singles = os.path.join(dump_dir, 'metrics_docs_singles.json')
-        dump_avg = os.path.join(dump_dir, 'metrics_docs_average.json')
-        docs_dir = os.path.join('..', 'docs')
-
-        info('TESTING EVAL COMMAND...')
-        result = runner.invoke(eval, ['-p', docs_dir, '-d'])
-        # Command has no errors on run
-        self.assertEqual(result.exit_code, 0,
-            f'Error running reset command with "-p {docs_dir} -d"\nResult: {result}')
-        
-        info('TESTING ON DOCS IMAGES...')
-        with open(dump_singles) as json_file:
-            singles = json.load(json_file)
-            #singles = json.dumps(singles, indent=4)
-        with open(dump_avg) as json_file:
-            avg = json.load(json_file)
-            #avg = json.dumps(avg, indent=4)
-        self.assertIsNotNone(singles, 'Error, file not found: ' + dump_singles)
-        self.assertIsNotNone(singles, 'Error, file not found: ' + dump_avg)
-        singles.append(avg)
-        for i in range(3):
-            for key in singles[i]:
-                self.assertEqual(singles[i][key], sample_results[i][key], 'Key value not equal: ' + key)
-
 
 if __name__ == '__main__':
     unittest.main()

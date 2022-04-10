@@ -1,14 +1,28 @@
-//Copyright (c) 2016 nbrancati
+/*
+Copyright (c) 2016 nbrancati.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the "Software"), to deal 
+in the Software without restriction, including without limitation the rights 
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+copies of the Software, and to permit persons to whom the Software is 
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included 
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
 
 // The code is free to use for research, provided that the following paper is cited in the works that use the code.
 // Brancati N., De Pietro G., Frucci M., Gallo L., "Human skin detection through correlation rules between
 // the YCb and YCr subspaces based on dynamic color clustering", Computer Vision and Image Understanding (submitted)
-
-// How to use:
-// For Windows OS: run skin.exe. In command line, insert the path of the test image,
-// for example "image1.jpg" and "image2.jpg".
-// For Linux OS: go in command line. In the directory where the executable object fine is installed (skin),
-// copy this string "./skin image1.jpg" for the image1, or this string "./skin image2.jpg" for the image2.
 
 #include "cv.h"
 #include "cvaux.h"

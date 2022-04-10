@@ -110,7 +110,6 @@ def calc_mean_metrics(measurements_list: list, metric_fns: list, desc: str, meth
     # Insert datasets and method data into the resulting dict
     res['method'] = method
     try:
-        desc = desc.split(' ')[0] # remove hash string
         desc = os.path.normpath(desc) # remove trailing slash
         desc = os.path.basename(desc) # get prediction folder name
         desc = desc.lower().replace('_small', '') # lower case and rename HGR_small to HGR

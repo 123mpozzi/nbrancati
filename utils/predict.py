@@ -4,9 +4,6 @@ import time
 import traceback
 from shutil import copyfile
 
-from tqdm import tqdm
-
-from utils.hash_utils import hash_dir
 from utils.logmanager import *
 
 method_name = 'rulebased'
@@ -87,9 +84,7 @@ def make_predictions(image_paths, out_dir, out_bench: str = ''):
     for basedir in ('p', 'y', 'x'):
         os.makedirs(os.path.join(out_dir, basedir), exist_ok=True)
     
-    image_paths_tqdm = tqdm(image_paths)
-    
-    for i in image_paths_tqdm:
+    for i in image_paths:
         im_path = i[0]
         y_path = i[1]
 
@@ -100,10 +95,6 @@ def make_predictions(image_paths, out_dir, out_bench: str = ''):
         except Exception:
             error(f'Failed to infer on image: {im_path}')
             print(traceback.format_exc(), file=sys.stderr)
-
-    predictions_hash = hash_dir(out_dir)
-    print(predictions_hash, file=sys.stderr)
-    return predictions_hash
 
 def base_preds(timestr: str, datasets: list, only_test_set: bool = True):
     '''

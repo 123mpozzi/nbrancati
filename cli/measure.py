@@ -4,7 +4,6 @@ import os
 import click
 from utils.metrics import *
 from utils.predict import method_name
-from utils.hash_utils import hash_dir
 from utils.metrics_utils import calc_metrics, calc_mean_metrics
 
 dump_dir = 'dumps'
@@ -29,7 +28,7 @@ def eval(path, dump):
     p_path = os.path.join(path, 'p') # Path eg. 'predictions/HGR_small_on_ECU/p'
 
     singles = calc_metrics(y_path, p_path, metrics)
-    avg = calc_mean_metrics(singles, metrics, desc=path + ' with hash=' + hash_dir(path), method=method_name)
+    avg = calc_mean_metrics(singles, metrics, desc=path, method=method_name)
 
     if dump:
         path_bn = os.path.basename(os.path.normpath(path))

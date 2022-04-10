@@ -9,14 +9,3 @@ services:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
     user: "1000"
     command: "bash -c \"while true; do sleep 3600; done\""
-    #  opencv5:
-    #    build:
-    #      context: .
-    #      dockerfile: Dockerfile-qt5
-    #    environment:
-    #      DISPLAY: $DISPLAY
-    #    volumes:
-    #      - .:/app
-    #      - /tmp/.X11-unix/:/tmp/.X11-unix/
-    #    user: "1000"
-    #    command: "bash -c \"while true; do sleep 3600; done\""
