@@ -6,9 +6,10 @@
 [vpu]: http://www-vpu.eps.uam.es/publications/SkinDetDM/#dataset "VPU download page"
 [uchile]: http://web.archive.org/web/20070707151628/http://agami.die.uchile.cl/skindiff/ "UChile download page"
 
-
+[thesis]: https://github.com/123mpozzi/skin-detection-thesis "Human Skin Detection In Color Images"
 # Adaptive rule based skin detector
 Detecting human skin using thresholds.  
+This work is part of my [Bachelor thesis][thesis].
 
 #### Original Paper
 N. Brancati, G. De Pietro,M. Frucci, and L. Gallo. “Human skin detection through correlation rules between the YCb and YCr subspaces based on dynamic color clustering”. Computer Vision and Image Understanding 155, 2017, pp. 33–42.
@@ -21,9 +22,13 @@ https://github.com/nadiabrancati/skin_detection/
 
 ## Outcomes
 
-![Outcomes](docs/outcomes.png "Outcomes")
-> Significant outcomes: (a) the input image; (b) the ground truth; (c) detected skin pixels.  
-Input images are from ECU, HGR, and Schmugge datasets.
+<div align="center">
+    <img src="docs/outcomes.png" alt="Outcomes" title="Outcomes">
+    <br>
+    Significant outcomes: (a) the input image; (b) the ground truth; (c) detected skin pixels.
+    <br>Input images are from ECU, HGR, and Schmugge datasets.
+</div>
+<br>
 
 These are some significant outcomes (hence not representative; for the skin detector performance see [Performance](#Performance))
 that shows the strengths and limitations of the skin detector.  
@@ -87,6 +92,12 @@ Methodology is explained in the thesis.
 
 ## Skin detection algorithm
 
+Algorithm overview  
+1. Input image RGB to YCbCr
+2. Cr<sub>max</sub> and Cb<sub>min</sub> computation
+3. Pixel-wise computation of the correlation rules parameters
+4. Pixel-wise correlation rules check
+
 The skin pixels clusters assume a trapezoidal shape in the YCb and YCr color subspaces.  Moreover, the shape and size of the trapezium vary according to many factors, such as the illumination conditions.
 In high illumination conditions, the base of the trapezium results larger.  
 
@@ -94,14 +105,13 @@ Besides, the chrominance components of a skin pixel P with coordinates (P<sub>Y<
 
 The aforementioned observations are the base of the method: it tries to define image-specific trapeziums in the YCb and YCr color subspaces and then verifies that the correlation rules between the two subspaces reflect the inversely proportional behavior of the chrominance components.
 
-![Trapezia Parameters](docs/trapezia_params.png "Trapezia Parameters")
-> Computation of the correlation rules parameters. Adapted from the original paper (Brancati et al. 2017)
-
-Algorithm overview  
-1. Input image RGB to YCbCr
-2. Cr<sub>max</sub> and Cb<sub>min</sub> computation
-3. Pixel-wise computation of the correlation rules parameters
-4. Pixel-wise correlation rules check
+<br/>
+<div align="center">
+  <img width="500" src="docs/trapezia_params.png" alt="Trapezia parameters" title="Trapezia parameters">
+  <br>
+  Computation of the correlation rules parameters. Adapted from the original paper (Brancati et al. 2017)
+</div>
+<br>
 
 
 ## Usage
